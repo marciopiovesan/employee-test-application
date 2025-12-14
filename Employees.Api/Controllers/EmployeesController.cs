@@ -10,7 +10,7 @@ namespace Employees.Api.Controllers
     [ApiController]
     [Route("[controller]")]
     public class EmployeesController(
-        ICommandHandler<CreateEmployeeCommand, long> createCommandHandler,
+        ICommandHandler<CreateEmployeeCommand, int> createCommandHandler,
         ICommandHandler<UpdateEmployeeCommand> updateCommandHandler,
         ICommandHandler<DeleteEmployeeCommand> deleteCommandHandler,
         IQueryHandler<GetEmployeeByIdQuery, Result<Employee>> getByIdQueryHandler,

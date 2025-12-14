@@ -11,7 +11,7 @@ namespace Employees.Application.DependencyInjection
     {
         public static IServiceCollection AddApplicationLayerServices(this IServiceCollection services)
         {
-            services.AddScoped<ICommandHandler<CreateEmployeeCommand, long>, CreateEmployeeCommandHandler>();
+            services.AddScoped<ICommandHandler<CreateEmployeeCommand, int>, CreateEmployeeCommandHandler>();
             services.AddScoped<ICommandHandler<UpdateEmployeeCommand>, UpdateEmployeeCommandHandler>();
             services.AddScoped<ICommandHandler<DeleteEmployeeCommand>, DeleteEmployeeCommandHandler>();
             services.AddScoped<IQueryHandler<GetEmployeeByIdQuery, Result<Employee>>, GetEmployeeByIdQueryHandler>();

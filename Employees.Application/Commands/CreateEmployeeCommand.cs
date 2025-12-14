@@ -3,7 +3,7 @@ using Employees.Domain.Entities;
 
 namespace Employees.Application.Commands
 {
-    public class CreateEmployeeCommand : ICommand<long>
+    public class CreateEmployeeCommand : ICommand<int>
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

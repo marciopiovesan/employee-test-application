@@ -13,7 +13,7 @@ namespace Employees.Application.Commands
             var validationResult = await validator.ValidateAsync(command, cancellationToken);
             if (!validationResult.IsValid)
             {
-                return ValidationResult<long>.Failure(validationResult.Errors.Select(e => e.ErrorMessage));
+                return ValidationResult<int>.Failure(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
             var employee = await dbContext.Employees.FirstOrDefaultAsync(e => e.Id == command.Id, cancellationToken);

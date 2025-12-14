@@ -6,6 +6,6 @@ namespace Employees.Application.Queries
 {
     public class GetEmployeeByIdQuery : IQuery<Result<Employee>>
     {
-        public long Id { get; set; }
+        public int Id { get; set; }
     }
 }

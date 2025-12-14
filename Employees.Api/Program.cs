@@ -5,6 +5,7 @@ using Employees.Infrastructure.Database;
 using Employees.Infrastructure.Logging;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation;
+using Employees.Api.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,8 @@ builder.Services.AddValidatorsFromAssembly(typeof(CreateEmployeeCommandValidator
 
 builder.Services.AddApplicationLayerServices();
 
+builder.Services.AddScoped<RequestLoggingMiddleware>();
+
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -28,7 +31,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -39,10 +41,12 @@ if (app.Environment.IsDevelopment())
     using ApplicationDbContext dbContext =
         scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-    //dbContext.Database.Migrate();
+    dbContext.Database.Migrate();
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.UseAuthorization();
 

@@ -7,14 +7,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Employees.Application.Commands
 {
-    public class CreateEmployeeCommandHandler(IApplicationDbContext dbContext, IValidator<CreateEmployeeCommand> validator) : ICommandHandler<CreateEmployeeCommand, long>
+    public class CreateEmployeeCommandHandler(IApplicationDbContext dbContext, IValidator<CreateEmployeeCommand> validator) : ICommandHandler<CreateEmployeeCommand, int>
     {
-        public async Task<Result<long>> Handle(CreateEmployeeCommand command, CancellationToken cancellationToken)
+        public async Task<Result<int>> Handle(CreateEmployeeCommand command, CancellationToken cancellationToken)
         {
             var validationResult = await validator.ValidateAsync(command, cancellationToken);
             if (!validationResult.IsValid)
             {
-                return ValidationResult<long>.Failure(validationResult.Errors.Select(e => e.ErrorMessage));
+                return ValidationResult<int>.Failure(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
             var employee = new Employee
@@ -35,7 +35,7 @@ namespace Employees.Application.Commands
 
             dbContext.Employees.Add(employee);
             await dbContext.SaveChangesAsync(cancellationToken);
-            return Result<long>.Success(employee.Id);
+            return Result<int>.Success(employee.Id);
         }
     }
 }
