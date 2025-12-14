@@ -1,0 +1,16 @@
+services:
+  employees.api:
+    image: ${DOCKER_REGISTRY-}employeesapi
+    build:
+      context: .
+      dockerfile: Employees.Api/Dockerfile
+  sql:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    container_name: sql_server2022
+    ports: # not actually needed, because the two services are on the same network.
+      - "1433:1433" 
+    volumes:
+    - C:\SQL_DATA:/var/opt/mssql/data
+    environment:
+      - ACCEPT_EULA=y
+      - SA_PASSWORD=GenericPassword123!
