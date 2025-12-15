@@ -1,5 +1,4 @@
 ﻿using Employees.Application.Interfaces.CommandQuery;
-using Employees.Domain.Entities;
 
 namespace Employees.Application.Commands
 {

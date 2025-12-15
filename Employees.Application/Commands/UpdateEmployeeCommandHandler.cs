@@ -28,12 +28,12 @@ namespace Employees.Application.Commands
             employee.Email = command.Email;
             employee.DateOfBirth = command.DateOfBirth;
             employee.DocumentNumber = command.DocumentNumber;
-            employee.Role.Id = command.RoleId;
-            employee.Manager.Id = command.ManagerId;
+            employee.RoleId = command.RoleId;
+            employee.ManagerId = command.ManagerId;
 
             foreach (var phone in command.PhoneNumbers)
             {
-                var existingPhone = employee.PhoneNumbers.FirstOrDefault(p => p.Id == phone.Id);
+                var existingPhone = employee.PhoneNumbers?.FirstOrDefault(p => p.Id == phone.Id);
                 if (existingPhone != null)
                 {
                     existingPhone.Number = phone.Number;
@@ -41,7 +41,13 @@ namespace Employees.Application.Commands
                 }
                 else
                 {
-                    employee.PhoneNumbers.Add(phone);
+                    var newPhone = new Domain.Entities.PhoneNumber
+                    {
+                        Number = phone.Number,
+                        PhoneType = phone.PhoneType,
+                        EmployeeId = employee.Id
+                    };
+                    (employee.PhoneNumbers ??= []).Add(newPhone);
                 }
             }
 

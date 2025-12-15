@@ -1,5 +1,4 @@
 ﻿using Employees.Application.Interfaces.CommandQuery;
-using Employees.Domain.Entities;
 
 namespace Employees.Application.Commands
 {
@@ -11,8 +10,15 @@ namespace Employees.Application.Commands
         public string DocumentNumber { get; set; }
         public DateTime DateOfBirth { get; set; }
         public int RoleId { get; set; }
-        public EmployeeRole Role { get; set; }
-        public List<PhoneNumber> PhoneNumbers { get; set; }
+        public int RoleLevel { get; set; }
+        public List<PhoneNumber>? PhoneNumbers { get; set; }
         public int? ManagerId { get; set; }
+    }
+
+    public class PhoneNumber
+    {
+        public int Id { get; set; }
+        public string Number { get; set; }
+        public string PhoneType { get; set; }
     }
 }

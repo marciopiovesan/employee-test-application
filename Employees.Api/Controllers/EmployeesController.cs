@@ -9,15 +9,12 @@ namespace Employees.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class EmployeesController(
-        ICommandHandler<CreateEmployeeCommand, int> createCommandHandler,
-        ICommandHandler<UpdateEmployeeCommand> updateCommandHandler,
-        ICommandHandler<DeleteEmployeeCommand> deleteCommandHandler,
-        IQueryHandler<GetEmployeeByIdQuery, Result<Employee>> getByIdQueryHandler,
-        IQueryHandler<GetEmployeesQuery, PaginatedResult<Employee>> paginatedQueryHandler) : ControllerBase
+    public class EmployeesController : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetEmployees([FromQuery] GetEmployeesQuery getEmployeesQuery)
+        public async Task<IActionResult> GetEmployees(
+            [FromQuery] GetEmployeesQuery getEmployeesQuery,
+            [FromServices] IQueryHandler<GetEmployeesQuery, PaginatedResult<Employee>> paginatedQueryHandler)
         {
             var result = await paginatedQueryHandler.Handle(getEmployeesQuery, CancellationToken.None);
 
@@ -30,7 +27,8 @@ namespace Employees.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetEmployee(int id)
+        public async Task<IActionResult> GetEmployee(int id,
+            [FromServices] IQueryHandler<GetEmployeeByIdQuery, Result<Employee>> getByIdQueryHandler)
         {
             var result = await getByIdQueryHandler.Handle(new GetEmployeeByIdQuery { Id = id }, CancellationToken.None);
 
@@ -43,7 +41,9 @@ namespace Employees.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateEmployee([FromBody] CreateEmployeeCommand employee)
+        public async Task<IActionResult> CreateEmployee(
+            [FromBody] CreateEmployeeCommand employee, 
+            [FromServices] ICommandHandler<CreateEmployeeCommand, int> createCommandHandler)
         {
             var result = await createCommandHandler.Handle(employee, CancellationToken.None);
             if (result.IsSuccess)
@@ -55,7 +55,9 @@ namespace Employees.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEmployee(int id, [FromBody] UpdateEmployeeCommand employee)
+        public async Task<IActionResult> UpdateEmployee(int id, 
+            [FromBody] UpdateEmployeeCommand employee, 
+            [FromServices] ICommandHandler<UpdateEmployeeCommand> updateCommandHandler)
         {
             employee.Id = id;
             var result = await updateCommandHandler.Handle(employee, CancellationToken.None);
@@ -69,7 +71,8 @@ namespace Employees.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEmployee(int id)
+        public async Task<IActionResult> DeleteEmployee(int id, 
+            [FromServices] ICommandHandler<DeleteEmployeeCommand> deleteCommandHandler)
         {
             var result = await deleteCommandHandler.Handle(new DeleteEmployeeCommand { Id = id }, CancellationToken.None);
             if (result.IsSuccess)
@@ -80,7 +83,26 @@ namespace Employees.Api.Controllers
             return HandleFailure(result);
         }
 
-        private IActionResult HandleFailure(Result result)
+        [HttpPost("{id}/set-password")]
+        public async Task<IActionResult> SetPassword(int id, 
+            [FromBody] string newPassword, 
+            [FromServices] ICommandHandler<SetEmployeePasswordCommand, bool> setPasswordCommandHandler)
+        {
+            var command = new SetEmployeePasswordCommand
+            {
+                EmployeeId = id,
+                NewPassword = newPassword
+            };
+
+            var result = await setPasswordCommandHandler.Handle(command, CancellationToken.None);
+            if (result.IsSuccess)
+            {
+                return NoContent();
+            }
+            return HandleFailure(result);
+        }
+
+        private ObjectResult HandleFailure(Result result)
         {
             return result.ErrorType switch
             {

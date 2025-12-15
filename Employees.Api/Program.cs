@@ -1,11 +1,14 @@
+using Employees.Api.Middlewares;
 using Employees.Application.DependencyInjection;
 using Employees.Application.Interfaces;
 using Employees.Application.Validations;
+using Employees.Domain.Entities;
 using Employees.Infrastructure.Database;
+using Employees.Infrastructure.DependencyInjection;
 using Employees.Infrastructure.Logging;
-using Microsoft.EntityFrameworkCore;
 using FluentValidation;
-using Employees.Api.Middlewares;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,7 @@ builder.Services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<Ap
 builder.Services.AddValidatorsFromAssembly(typeof(CreateEmployeeCommandValidator).Assembly);
 
 builder.Services.AddApplicationLayerServices();
+builder.Services.AddInfrastructureLayerServices();
 
 builder.Services.AddScoped<RequestLoggingMiddleware>();
 

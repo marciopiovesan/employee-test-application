@@ -3,7 +3,6 @@ using Employees.Application.Interfaces;
 using Employees.Application.Interfaces.CommandQuery;
 using Employees.Domain.Entities;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 
 namespace Employees.Application.Commands
 {
@@ -17,6 +16,8 @@ namespace Employees.Application.Commands
                 return ValidationResult<int>.Failure(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
+            //Validate if Manager exists and has higher role level
+
             var employee = new Employee
             {
                 FirstName = command.FirstName,
@@ -24,13 +25,13 @@ namespace Employees.Application.Commands
                 Email = command.Email,
                 DateOfBirth = command.DateOfBirth,
                 DocumentNumber = command.DocumentNumber,
-                Role = await dbContext.EmployeeRoles.FirstOrDefaultAsync(r => r.Id == command.RoleId, cancellationToken) 
-                       ?? throw new Exception("Role not found"),
-                Manager = command.ManagerId.HasValue 
-                          ? await dbContext.Employees.FirstOrDefaultAsync(e => e.Id == command.ManagerId.Value, cancellationToken) 
-                            ?? throw new Exception("Manager not found") 
-                          : null,
-                PhoneNumbers = command.PhoneNumbers
+                RoleId = command.RoleId,
+                ManagerId = command.ManagerId,
+                PhoneNumbers = command.PhoneNumbers?.Select(pn => new Domain.Entities.PhoneNumber
+                {
+                    Number = pn.Number,
+                    PhoneType = pn.PhoneType
+                }).ToList()
             };
 
             dbContext.Employees.Add(employee);

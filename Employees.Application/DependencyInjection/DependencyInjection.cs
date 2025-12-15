@@ -16,6 +16,7 @@ namespace Employees.Application.DependencyInjection
             services.AddScoped<ICommandHandler<DeleteEmployeeCommand>, DeleteEmployeeCommandHandler>();
             services.AddScoped<IQueryHandler<GetEmployeeByIdQuery, Result<Employee>>, GetEmployeeByIdQueryHandler>();
             services.AddScoped<IQueryHandler<GetEmployeesQuery, PaginatedResult<Employee>>, GetEmployeesQueryHandler>();
+            services.AddScoped<ICommandHandler<SetEmployeePasswordCommand, bool>, SetEmployeePasswordCommandHandler>();
             return services;
         }
     }
